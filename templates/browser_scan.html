@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Browser Scanning</title>
+    <style>
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background: #090d00;
+        color: rgba(255, 255, 255, 0.75);
+        font-family: "Arial", sans-serif;
+        margin: 0;
+        padding: 20px;
+      }
+
+      .card {
+        border: 3px solid rgba(0, 0, 0, 0.6);
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        align-items: stretch;
+        min-height: 60vh;
+        min-width: 60vw;
+        padding: 30px;
+        box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.5);
+        background: rgba(0, 0, 0, 0.7);
+      }
+
+      h1 {
+        font: 700 2em/1 "Oswald", sans-serif;
+        margin: 0;
+        letter-spacing: 2px;
+        text-align: center;
+        background: url(https://i.ibb.co/RDTnNrT/animated-text-fill.png) repeat-y;
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+        -webkit-text-fill-color: transparent;
+        animation: aitf 80s linear infinite;
+      }
+
+      @keyframes aitf {
+        0% {
+          background-position: 0% 50%;
+        }
+        100% {
+          background-position: 100% 50%;
+        }
+      }
+
+      .meta {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+      }
+
+      .meta p {
+        margin: 0;
+        font-size: 1.05em;
+        color: rgba(255,255,255,0.85);
+      }
+
+      .warning {
+        color: #ff8080;
+        font-weight: 700;
+        text-align: center;
+      }
+
+      .success {
+        color: #98fb98;
+        font-weight: 700;
+        text-align: center;
+      }
+
+      .section {
+        border-top: 1px dashed rgba(255,255,255,0.06);
+        padding-top: 16px;
+      }
+
+      .list {
+        max-height: 220px;
+        overflow-y: auto;
+        padding: 10px;
+        display: grid;
+        gap: 10px;
+      }
+
+      .item {
+        background: rgba(255,255,255,0.03);
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 0.95em;
+      }
+
+      .item a {
+        color: rgba(0, 245, 255, 0.9);
+        text-decoration: none;
+        word-break: break-all;
+      }
+
+      .item small {
+        display: block;
+        color: rgba(255,255,255,0.6);
+        margin-top: 6px;
+      }
+
+      .controls {
+        display:flex;
+        gap:12px;
+        justify-content:center;
+      }
+
+      button.scan-btn {
+        padding: 12px 20px;
+        font-size: 1.05em;
+        cursor: pointer;
+        border-radius: 8px;
+        border: 1px solid #000;
+        background-color: #f0f0f0;
+        color: #333;
+        transition: transform 0.15s ease, box-shadow 0.25s ease;
+      }
+
+      button.scan-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0,245,255,0.08);
+      }
+
+      .note {
+        font-size: 0.95em;
+        color: rgba(255,255,255,0.6);
+        text-align: center;
+      }
+
+      /* scrollbar styling */
+      .list::-webkit-scrollbar { width: 8px; }
+      .list::-webkit-scrollbar-thumb {
+        background: rgba(255,255,255,0.06);
+        border-radius: 6px;
+      }
+
+      @media (max-width: 900px) {
+        .card { min-width: 92vw; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>Browser Scanning</h1>
+
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <ul style="color: #f55; font-weight: bold; margin: 0; text-align:center;">
+            {% for message in messages %}
+              <li>{{ message }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      {% endwith %}
+
+      <div class="meta">
+        <p><strong>Browser:</strong> {{ scan_data.browser if scan_data.browser else "Unknown" }}</p>
+        <p><strong>History checked:</strong> {{ scan_data.history_checked if scan_data.history_checked is defined else (scan_data.history|length if scan_data.history else 0) }}</p>
+        <!-- <p><strong>Generated:</strong> {{ scan_data.generated_at if scan_data.generated_at else "" }}</p> -->
+      </div>
+
+      <div class="section">
+        {% if scan_data.malicious_sites %}
+          <div class="warning">⚠️ Malicious / suspicious sites found</div>
+          <div class="list" aria-live="polite">
+            {% for site in scan_data.malicious_sites %}
+              <div class="item">
+                <div><strong>{{ site.title or "Untitled" }}</strong></div>
+                <div><a href="{{ site.url }}" target="_blank" rel="noopener noreferrer">{{ site.url }}</a></div>
+                <small>Last visited: {{ site.last_visit }} — Reason: {{ site.reason }}</small>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="success">✅ No known malicious sites found.</div>
+          {% if scan_data.message %}
+            <p class="note">{{ scan_data.message }}</p>
+          {% endif %}
+        {% endif %}
+      </div>
+
+      <div class="section">
+        <h3 style="margin:0 0 8px 0; text-align:center;">Recent History</h3>
+        {% if scan_data.history %}
+          <div class="list">
+            {% for entry in scan_data.history %}
+              <div class="item">
+                <div><strong>{{ entry.title or "Untitled" }}</strong></div>
+                <div><a href="{{ entry.url }}" target="_blank" rel="noopener noreferrer">{{ entry.url }}</a></div>
+                <small>Last visited: {{ entry.last_visit }}</small>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="note">No history entries available or history couldn't be read.</p>
+        {% endif %}
+      </div>
+
+      <div class="section controls">
+        <!-- these buttons assume you have routes to re-scan or to download the JSON -->
+        <form action="{{ url_for('browser_scanning') }}" method="get" style="margin:0;">
+          <button class="scan-btn" type="submit">Refresh Scan</button>
+        </form>
+
+        <!-- {% if scan_data %}
+        <form action="{{ url_for('static', filename='browser_scan.json') }}" method="get" style="margin:0;">
+          <button class="scan-btn" type="submit">Open JSON</button>
+        </form>
+        {% endif %} -->
+      </div>
+
+    </div>
+  </body>
+</html>

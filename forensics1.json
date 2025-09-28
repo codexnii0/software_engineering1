@@ -1,0 +1,54 @@
+{
+    "OS": {
+        "Name": "Windows 10 Home Single Language",
+        "Release ID": "2009",
+        "Current Build": "19045",
+        "Version": "22H2"
+    },
+    "Users": {
+        "total users": 5,
+        "user 01": "Administrator",
+        "user 02": "Codex",
+        "user 03": "DefaultAccount",
+        "user 04": "Guest",
+        "user 05": "WDAGUtilityAccount"
+    },
+    "Computer": {
+        "Name": "MSI"
+    },
+    "Processor": {
+        "Identifier": "_Intel64_Family_6_Model_142_",
+        "ProcessorName": "_Intel(R)_Core(TM)_i5",
+        "ProcessorType": "8365U_CPU_@_1.60GHz"
+    },
+    "Storage": {
+        "0": "KINGSTON OM8PCP3512F-AI1",
+        "1": "SanDisk SSD PLUS 480GB"
+    },
+    "Shutdown": {
+        "Last Shutdown Time": "2025-09-24 15:16:51.197169+00:00"
+    },
+    "Motherboard": {
+        "Details": "ACPI x64-based PC"
+    },
+    "System": {
+        "Model": "Latitude 5300",
+        "Manufacturer": "Dell Inc.",
+        "SystemSKU": "08B7",
+        "SystemVersion": "Not Found"
+    },
+    "BIOS Info": {
+        "BIOSVendor": "Dell Inc.",
+        "BIOSVersion": "1.29.0",
+        "BIOSReleaseDate": "12/12/2023"
+    },
+    "Audit Policies": {
+        "Status": "Present"
+    },
+    "Access Control Policies": {
+        "Status": "Present"
+    },
+    "User Rights Assignment": {
+        "Status": "Present"
+    }
+}
